@@ -14,14 +14,20 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tp, err := template.ParseFiles("./resources/views/home.html")
+	files := []string{
+		"./resources/views/layouts/default.html",
+		"./resources/views/partials/nav.html",
+		"./resources/views/home.html",
+	}
+
+	tp, err := template.ParseFiles(files...)
 	if err != nil {
 		log.Print(err.Error())
 		http.Error(w, "服务内部出错", http.StatusInternalServerError)
 		return
 	}
 
-	err = tp.Execute(w, nil)
+	err = tp.ExecuteTemplate(w, "layout", nil)
 	if err != nil {
 		log.Print(err.Error())
 		http.Error(w, "服务内部出错", http.StatusInternalServerError)
@@ -31,6 +37,10 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	mux := http.NewServeMux()
+
+	fileServer := http.FileServer(http.Dir("./resources/asserts/"))
+
+	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/blog/view", handlers.BlogView)
