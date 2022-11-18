@@ -13,6 +13,19 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	blogs, err := app.blogs.Latest()
+	if err != nil {
+		app.errorLog.Print(err.Error())
+		http.Error(w, "服务内部出错", http.StatusInternalServerError)
+		return
+	}
+
+	for _, blog := range blogs {
+		fmt.Fprintf(w, "%+v\n", blog)
+	}
+
+	return
+
 	files := []string{
 		"./resources/views/layouts/default.html",
 		"./resources/views/partials/nav.html",
