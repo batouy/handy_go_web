@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"text/template"
 
 	"blogdemo.batou.cn/app/handlers"
@@ -36,6 +37,9 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./resources/asserts/"))
@@ -46,7 +50,13 @@ func main() {
 	mux.HandleFunc("/blog/view", handlers.BlogView)
 	mux.HandleFunc("/blog/create", handlers.BlogCreate)
 
-	log.Print("启动web服务，端口4000")
-	err := http.ListenAndServe(":4000", mux)
-	log.Fatal(err)
+	srv := &http.Server{
+		Addr:     ":4000",
+		Handler:  mux,
+		ErrorLog: errorLog,
+	}
+
+	infoLog.Print("启动web服务，端口4000")
+	err := srv.ListenAndServe()
+	errorLog.Fatal(err)
 }
