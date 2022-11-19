@@ -1,7 +1,23 @@
 {{define "title"}}首页{{end}}
 
 {{define "main"}}
-<div>
-    博客首页，主内容区
-</div>
+<h2>博客列表</h2>
+    {{if .}}
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Created</th>
+            <th>ID</th>
+        </tr>
+        {{range .}}
+        <tr>
+            <td><a href='/blog/view?id={{.ID}}'>{{.Title}}</a></td>
+            <td>{{humanDate .CreatedAt}}</td>
+            <td>#{{.ID}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+    <p>暂无文章!</p>
+    {{end}}
 {{end}}

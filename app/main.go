@@ -21,7 +21,7 @@ func main() {
 	errorLog := log.New(os.Stderr, "ERR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// 数据库连接，parseTime指令的作用是将SQL的TIME和DATE字段转为Go的time.Time对象
-	dsn := "root:123456@tcp(127.0.0.1:3305)/blog?parseTime=true"
+	dsn := "root:123456@tcp(127.0.0.1:3305)/blog?parseTime=true&loc=Local"
 
 	db, err := dbConnect(dsn)
 	if err != nil {

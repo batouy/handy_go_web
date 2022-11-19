@@ -20,11 +20,31 @@ type BlogModel struct {
 }
 
 func (m *BlogModel) Insert(title, content string) (int, error) {
-	return 0, nil
+	stmt := "insert into blogs (title, content, created_at, updated_at) values(?,?,?,?)"
+	nowTime := time.Now()
+	result, err := m.DB.Exec(stmt, title, content, nowTime, nowTime)
+	if err != nil {
+		return 0, nil
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, nil
+	}
+	return int(id), nil
 }
 
-func (m *BlogModel) Get() (*Blog, error) {
-	return nil, nil
+func (m *BlogModel) Get(id int) (*Blog, error) {
+	stmt := "select id, title, content, created_at, updated_at from blogs where id=?"
+	row := m.DB.QueryRow(stmt, id)
+	blog := &Blog{}
+
+	err := row.Scan(&blog.ID, &blog.Title, &blog.Content, &blog.CreatedAt, &blog.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return blog, nil
 }
 
 func (m *BlogModel) Latest() ([]*Blog, error) {

@@ -1,0 +1,15 @@
+{{define "title"}}博客详情页{{end}}
+
+{{define "main"}}
+<div class='blog'>
+    <div class='metadata'>
+        <strong>{{.Title}}</strong>
+        <span>#{{.ID}}</span>
+    </div>
+    <pre><code>{{.Content}}</code></pre>
+    
+    <div class='metadata'>
+        <time>创建时间： {{humanDate .CreatedAt}}</time>
+    </div>
+</div>
+{{end}}
