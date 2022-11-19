@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -25,10 +27,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) blogView(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err != nil || id <= 1 {
-		http.NotFound(w, r)
-		return
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		app.clientError(w, http.StatusNotFound)
 	}
 
 	blog, err := app.blogs.Get(id)
@@ -44,12 +45,11 @@ func (app *application) blogView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
+	data := app.newTemplateData()
+	app.render(w, http.StatusOK, "blog_create.html", data)
+}
 
+func (app *application) blogStore(w http.ResponseWriter, r *http.Request) {
 	id, err := app.blogs.Insert("测试4", "测试内容44444")
 
 	if err != nil {
@@ -57,5 +57,5 @@ func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/blog/view?id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/blog/view/%d", id), http.StatusSeeOther)
 }

@@ -1,0 +1,19 @@
+{{define "title"}}创建博客{{end}}
+
+{{define "main"}}
+<form action="/blog/store" method="POST">
+    <div>
+        <label>标题：</label>
+        <input type="text" name="title" />
+    </div>
+
+    <div>
+        <label>内容：</label>
+        <textarea name="content"></textarea>
+    </div>
+
+    <div>
+        <input type='submit' value='发布'>
+    </div>
+</form>
+{{end}}
