@@ -14,8 +14,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	blogs, err := app.blogs.Latest()
 	if err != nil {
-		app.errorLog.Print(err.Error())
-		http.Error(w, "服务内部出错", http.StatusInternalServerError)
+		app.serverError(w, err)
 		return
 	}
 
@@ -34,8 +33,7 @@ func (app *application) blogView(w http.ResponseWriter, r *http.Request) {
 
 	blog, err := app.blogs.Get(id)
 	if err != nil {
-		app.errorLog.Print(err.Error())
-		http.Error(w, "未查到数据", http.StatusNotFound)
+		app.clientError(w, http.StatusNotFound)
 		return
 	}
 
@@ -55,8 +53,7 @@ func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
 	id, err := app.blogs.Insert("测试4", "测试内容44444")
 
 	if err != nil {
-		app.errorLog.Print(err.Error())
-		http.Error(w, "内部出错", http.StatusInternalServerError)
+		app.serverError(w, err)
 		return
 	}
 

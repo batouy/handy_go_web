@@ -52,7 +52,7 @@ func (m *BlogModel) Latest() ([]*Blog, error) {
 	rows, err := m.DB.Query(stmt)
 
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
 	blogs := []*Blog{}

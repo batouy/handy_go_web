@@ -2,7 +2,7 @@ package main
 
 import "net/http"
 
-func (app *application) routes() *http.ServeMux {
+func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./resources/asserts/"))
@@ -13,5 +13,5 @@ func (app *application) routes() *http.ServeMux {
 	mux.HandleFunc("/blog/view", app.blogView)
 	mux.HandleFunc("/blog/create", app.blogCreate)
 
-	return mux
+	return app.recoverPanic(app.logRequest(secureHeaders(mux)))
 }
