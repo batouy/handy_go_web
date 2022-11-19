@@ -13,6 +13,7 @@ type templateData struct {
 	CurrentYear int // 页面公共底部展示当前年份
 	Blog        *models.Blog
 	Blogs       []*models.Blog
+	Form        any
 }
 
 func humanDate(t time.Time) string {
@@ -28,6 +29,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
 	pages, err := filepath.Glob("./resources/views/*.html")
+
 	if err != nil {
 		return nil, err
 	}

@@ -4,12 +4,18 @@
 <form action="/blog/store" method="POST">
     <div>
         <label>标题：</label>
-        <input type="text" name="title" />
+        {{with .Form.FieldErrors.title}}
+        <label class='error'>{{.}}</label>
+        {{end}}
+        <input type="text" name="title" value="{{.Form.Title}}" />
     </div>
 
     <div>
         <label>内容：</label>
-        <textarea name="content"></textarea>
+        {{with .Form.FieldErrors.content}}
+        <label class='error'>{{.}}</label>
+        {{end}}
+        <textarea name="content">{{.Form.Content}}</textarea>
     </div>
 
     <div>
