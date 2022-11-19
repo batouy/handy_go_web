@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"text/template"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -20,24 +19,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./resources/views/layouts/default.html",
-		"./resources/views/partials/nav.html",
-		"./resources/views/home.html",
-	}
-
-	tp, err := template.New("home").Funcs(functions).ParseFiles(files...)
-	if err != nil {
-		app.errorLog.Print(err.Error())
-		http.Error(w, "服务内部出错", http.StatusInternalServerError)
-		return
-	}
-
-	err = tp.ExecuteTemplate(w, "layout", blogs)
-	if err != nil {
-		app.errorLog.Print(err.Error())
-		http.Error(w, "服务内部出错", http.StatusInternalServerError)
-	}
+	app.render(w, http.StatusOK, "home.html", blogs)
 }
 
 func (app *application) blogView(w http.ResponseWriter, r *http.Request) {
@@ -54,26 +36,7 @@ func (app *application) blogView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./resources/views/layouts/default.html",
-		"./resources/views/partials/nav.html",
-		"./resources/views/blog.html",
-	}
-
-	tp, err := template.New("blog").Funcs(functions).ParseFiles(files...)
-	if err != nil {
-		app.errorLog.Print(err.Error())
-		http.Error(w, "服务内部出错", http.StatusInternalServerError)
-		return
-	}
-
-	err = tp.ExecuteTemplate(w, "layout", blog)
-
-	if err != nil {
-		app.errorLog.Print(err.Error())
-		http.Error(w, "服务内部出错", http.StatusInternalServerError)
-		return
-	}
+	app.render(w, http.StatusOK, "blog.html", blog)
 }
 
 func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {

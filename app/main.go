@@ -5,15 +5,17 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"text/template"
 
 	"blogdemo.batou.cn/common/models"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
-	infoLog  *log.Logger
-	errorLog *log.Logger
-	blogs    *models.BlogModel
+	infoLog       *log.Logger
+	errorLog      *log.Logger
+	blogs         *models.BlogModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
@@ -30,10 +32,16 @@ func main() {
 
 	defer db.Close()
 
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
 	app := &application{
-		infoLog:  infoLog,
-		errorLog: errorLog,
-		blogs:    &models.BlogModel{DB: db},
+		infoLog:       infoLog,
+		errorLog:      errorLog,
+		blogs:         &models.BlogModel{DB: db},
+		templateCache: templateCache,
 	}
 
 	srv := &http.Server{
