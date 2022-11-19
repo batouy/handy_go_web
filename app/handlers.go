@@ -4,16 +4,15 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
-	"unicode/utf8"
 
+	"blogdemo.batou.cn/common/validator"
 	"github.com/go-chi/chi/v5"
 )
 
 type blogForm struct {
-	Title       string
-	Content     string
-	FieldErrors map[string]string
+	Title   string
+	Content string
+	validator.Validator
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -68,25 +67,16 @@ func (app *application) blogStore(w http.ResponseWriter, r *http.Request) {
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
 
-	fieldErrors := make(map[string]string)
-
-	if strings.TrimSpace(title) == "" {
-		fieldErrors["title"] = "标题不能为空"
-	} else if utf8.RuneCountInString(title) > 100 {
-		fieldErrors["title"] = "标题不能超过100字"
-	}
-
-	if strings.TrimSpace(content) == "" {
-		fieldErrors["content"] = "内容不能为空"
-	}
-
 	form := blogForm{
-		Title:       title,
-		Content:     content,
-		FieldErrors: fieldErrors,
+		Title:   title,
+		Content: content,
 	}
 
-	if len(form.FieldErrors) > 0 {
+	form.CheckField(validator.NotBlank(form.Title), "title", "标题不能为空")
+	form.CheckField(validator.MaxChars(form.Title, 100), "title", "标题不能超过100字")
+	form.CheckField(validator.NotBlank(form.Content), "content", "内容不能为空")
+
+	if !form.Valid() {
 		data := app.newTemplateData()
 		data.Form = form
 		app.render(w, http.StatusUnprocessableEntity, "blog_create.html", data)
