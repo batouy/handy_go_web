@@ -4,7 +4,16 @@ import (
 	"path/filepath"
 	"text/template"
 	"time"
+
+	"blogdemo.batou.cn/common/models"
 )
+
+// 传到到前端页面的数据，含公共数据
+type templateData struct {
+	CurrentYear int // 页面公共底部展示当前年份
+	Blog        *models.Blog
+	Blogs       []*models.Blog
+}
 
 func humanDate(t time.Time) string {
 	return t.Format("2006:01:02 15:04:05")

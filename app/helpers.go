@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"time"
 )
 
-func (app *application) render(w http.ResponseWriter, status int, page string, data any) {
+// 执行页面渲染
+func (app *application) render(w http.ResponseWriter, status int, page string, data *templateData) {
 	tp, ok := app.templateCache[page]
 	if !ok {
 		app.errorLog.Printf(fmt.Sprintf("the template %s does not exist", page))
@@ -26,4 +28,10 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 
 	w.WriteHeader(status)
 	buf.WriteTo(w)
+}
+
+func (app *application) newTemplateData() *templateData {
+	return &templateData{
+		CurrentYear: time.Now().Year(),
+	}
 }

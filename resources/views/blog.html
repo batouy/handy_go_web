@@ -3,13 +3,13 @@
 {{define "main"}}
 <div class='blog'>
     <div class='metadata'>
-        <strong>{{.Title}}</strong>
-        <span>#{{.ID}}</span>
+        <strong>{{.Blog.Title}}</strong>
+        <span>#{{.Blog.ID}}</span>
     </div>
-    <pre><code>{{.Content}}</code></pre>
+    <pre><code>{{.Blog.Content}}</code></pre>
     
     <div class='metadata'>
-        <time>创建时间： {{humanDate .CreatedAt}}</time>
+        <time>创建时间： {{humanDate .Blog.CreatedAt}}</time>
     </div>
 </div>
 {{end}}
