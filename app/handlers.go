@@ -10,9 +10,9 @@ import (
 )
 
 type blogForm struct {
-	Title   string
-	Content string
-	validator.Validator
+	Title               string `form:"title"`
+	Content             string `form:"content"`
+	validator.Validator `form:"_"`
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -64,13 +64,8 @@ func (app *application) blogStore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := r.PostForm.Get("title")
-	content := r.PostForm.Get("content")
-
-	form := blogForm{
-		Title:   title,
-		Content: content,
-	}
+	var form blogForm
+	app.formDecoder.Decode(&form, r.PostForm)
 
 	form.CheckField(validator.NotBlank(form.Title), "title", "标题不能为空")
 	form.CheckField(validator.MaxChars(form.Title, 100), "title", "标题不能超过100字")
@@ -83,7 +78,7 @@ func (app *application) blogStore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := app.blogs.Insert(title, content)
+	id, err := app.blogs.Insert(form.Title, form.Content)
 	if err != nil {
 		app.serverError(w, err)
 		return

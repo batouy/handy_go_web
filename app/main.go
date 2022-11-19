@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"blogdemo.batou.cn/common/models"
+	"github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -16,6 +17,7 @@ type application struct {
 	errorLog      *log.Logger
 	blogs         *models.BlogModel
 	templateCache map[string]*template.Template
+	formDecoder   *form.Decoder
 }
 
 func main() {
@@ -42,6 +44,7 @@ func main() {
 		errorLog:      errorLog,
 		blogs:         &models.BlogModel{DB: db},
 		templateCache: templateCache,
+		formDecoder:   form.NewDecoder(),
 	}
 
 	srv := &http.Server{
