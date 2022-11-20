@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"log"
 	"net/http"
@@ -56,14 +57,25 @@ func main() {
 		sessionManager: sessionManager,
 	}
 
+	tlsConfig := &tls.Config{
+		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+	}
+
 	srv := &http.Server{
-		Addr:     ":4000",
-		Handler:  app.routes(),
-		ErrorLog: errorLog,
+		Addr:      ":4000",
+		Handler:   app.routes(),
+		ErrorLog:  errorLog,
+		TLSConfig: tlsConfig,
+		// 配置服务超时信息，提高可用性
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	infoLog.Print("启动web服务，端口4000")
-	err = srv.ListenAndServe()
+
+	// 本地测试用的密钥文件可以通过 Go 安装目录下的 generate_cert.go 文件创建
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	errorLog.Fatal(err)
 }
 
