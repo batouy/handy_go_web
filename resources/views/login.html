@@ -5,6 +5,7 @@
     {{range .Form.NonFieldErrors}}
     <div class='error'>{{.}}</div>
     {{end}}
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
     <div>
         <label>邮箱:</label>
         {{with .Form.FieldErrors.email}}

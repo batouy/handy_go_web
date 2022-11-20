@@ -16,6 +16,7 @@ type templateData struct {
 	Form           any
 	Flash          string // 在 session 中存取的一次性消息
 	IsAutheticated bool   // 是否认证用户
+	CSRFToken      string
 }
 
 func humanDate(t time.Time) string {

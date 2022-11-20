@@ -2,6 +2,7 @@
 
 {{define "main"}}
 <form action="/blog/store" method="POST">
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
     <div>
         <label>标题：</label>
         {{with .Form.FieldErrors.title}}

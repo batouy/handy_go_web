@@ -2,6 +2,7 @@
 
 {{define "main"}}
 <form action='/register' method='POST' novalidate>
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
     <div>
         <label>用户名:</label>
         {{with .Form.FieldErrors.name}}
