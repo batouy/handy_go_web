@@ -27,7 +27,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := app.newTemplateData()
+	data := app.newTemplateData(r)
 	data.Blogs = blogs
 
 	app.render(w, http.StatusOK, "home.html", data)
@@ -45,14 +45,14 @@ func (app *application) blogView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := app.newTemplateData()
+	data := app.newTemplateData(r)
 	data.Blog = blog
 
 	app.render(w, http.StatusOK, "blog.html", data)
 }
 
 func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
-	data := app.newTemplateData()
+	data := app.newTemplateData(r)
 	data.Form = blogForm{}
 	app.render(w, http.StatusOK, "blog_create.html", data)
 }
@@ -72,7 +72,7 @@ func (app *application) blogStore(w http.ResponseWriter, r *http.Request) {
 	form.CheckField(validator.NotBlank(form.Content), "content", "内容不能为空")
 
 	if !form.Valid() {
-		data := app.newTemplateData()
+		data := app.newTemplateData(r)
 		data.Form = form
 		app.render(w, http.StatusUnprocessableEntity, "blog_create.html", data)
 		return
@@ -83,6 +83,8 @@ func (app *application) blogStore(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
+	app.sessionManager.Put(r.Context(), "flash", "恭喜，文章保存成功！")
 
 	http.Redirect(w, r, fmt.Sprintf("/blog/view/%d", id), http.StatusSeeOther)
 }

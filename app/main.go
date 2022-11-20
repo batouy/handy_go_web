@@ -6,18 +6,22 @@ import (
 	"net/http"
 	"os"
 	"text/template"
+	"time"
 
 	"blogdemo.batou.cn/common/models"
+	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/alexedwards/scs/v2"
 	"github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
-	infoLog       *log.Logger
-	errorLog      *log.Logger
-	blogs         *models.BlogModel
-	templateCache map[string]*template.Template
-	formDecoder   *form.Decoder
+	infoLog        *log.Logger
+	errorLog       *log.Logger
+	blogs          *models.BlogModel
+	templateCache  map[string]*template.Template
+	formDecoder    *form.Decoder
+	sessionManager *scs.SessionManager
 }
 
 func main() {
@@ -39,12 +43,17 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	sessionManager := scs.New()
+	sessionManager.Store = mysqlstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour
+
 	app := &application{
-		infoLog:       infoLog,
-		errorLog:      errorLog,
-		blogs:         &models.BlogModel{DB: db},
-		templateCache: templateCache,
-		formDecoder:   form.NewDecoder(),
+		infoLog:        infoLog,
+		errorLog:       errorLog,
+		blogs:          &models.BlogModel{DB: db},
+		templateCache:  templateCache,
+		formDecoder:    form.NewDecoder(),
+		sessionManager: sessionManager,
 	}
 
 	srv := &http.Server{

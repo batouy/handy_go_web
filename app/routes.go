@@ -15,12 +15,20 @@ func (app *application) routes() http.Handler {
 		http.StripPrefix("/static", fileServer).ServeHTTP(w, r)
 	})
 
-	route.Get("/", app.home)
-	route.Get("/blog/view/{id}", app.blogView)
-	route.Get("/blog/create", app.blogCreate)
-	route.Post("/blog/store", app.blogStore)
+	dynamic := alice.New(app.sessionManager.LoadAndSave)
+
+	route.Get("/", handlerToFunc(dynamic.ThenFunc(app.home)))
+	route.Get("/blog/view/{id}", handlerToFunc(dynamic.ThenFunc(app.blogView)))
+	route.Get("/blog/create", handlerToFunc(dynamic.ThenFunc(app.blogCreate)))
+	route.Post("/blog/store", handlerToFunc(dynamic.ThenFunc(app.blogStore)))
 
 	commonMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 
 	return commonMiddleware.Then(route)
+}
+
+func handlerToFunc(handler http.Handler) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		handler.ServeHTTP(w, r)
+	}
 }

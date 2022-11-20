@@ -14,6 +14,7 @@ type templateData struct {
 	Blog        *models.Blog
 	Blogs       []*models.Blog
 	Form        any
+	Flash       string // 在 session 中存取的一次性消息
 }
 
 func humanDate(t time.Time) string {
