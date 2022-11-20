@@ -10,11 +10,12 @@ import (
 
 // 传到到前端页面的数据，含公共数据
 type templateData struct {
-	CurrentYear int // 页面公共底部展示当前年份
-	Blog        *models.Blog
-	Blogs       []*models.Blog
-	Form        any
-	Flash       string // 在 session 中存取的一次性消息
+	CurrentYear    int // 页面公共底部展示当前年份
+	Blog           *models.Blog
+	Blogs          []*models.Blog
+	Form           any
+	Flash          string // 在 session 中存取的一次性消息
+	IsAutheticated bool   // 是否认证用户
 }
 
 func humanDate(t time.Time) string {

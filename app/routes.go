@@ -19,8 +19,16 @@ func (app *application) routes() http.Handler {
 
 	route.Get("/", handlerToFunc(dynamic.ThenFunc(app.home)))
 	route.Get("/blog/view/{id}", handlerToFunc(dynamic.ThenFunc(app.blogView)))
-	route.Get("/blog/create", handlerToFunc(dynamic.ThenFunc(app.blogCreate)))
-	route.Post("/blog/store", handlerToFunc(dynamic.ThenFunc(app.blogStore)))
+
+	route.Get("/login", handlerToFunc(dynamic.ThenFunc(app.login)))
+	route.Post("/login", handlerToFunc(dynamic.ThenFunc(app.loginPost)))
+	route.Get("/register", handlerToFunc(dynamic.ThenFunc(app.register)))
+	route.Post("/register", handlerToFunc(dynamic.ThenFunc(app.registerPost)))
+
+	auth := dynamic.Append(app.auth)
+	route.Get("/blog/create", handlerToFunc(auth.ThenFunc(app.blogCreate)))
+	route.Post("/blog/store", handlerToFunc(auth.ThenFunc(app.blogStore)))
+	route.Post("/logout", handlerToFunc(auth.ThenFunc(app.logout)))
 
 	commonMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 

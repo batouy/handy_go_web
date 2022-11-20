@@ -2,7 +2,20 @@
 <nav>
     <div>
         <a href='/'>首页</a>
+        {{if .IsAutheticated}}
         <a href='/blog/create'>创建博客</a>
+        {{end}}
+    </div>
+
+    <div>
+        {{if .IsAutheticated}}
+        <form action='/logout' method='POST'>
+            <button>退出</button>
+        </form>
+        {{else}}
+        <a href='/register'>注册</a>
+        <a href='/login'>登录</a>
+        {{end}}
     </div>
 </nav>
 {{end}}
