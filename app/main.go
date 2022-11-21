@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"database/sql"
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -17,6 +18,7 @@ import (
 )
 
 type application struct {
+	debug          bool
 	infoLog        *log.Logger
 	errorLog       *log.Logger
 	blogs          *models.BlogModel
@@ -33,6 +35,9 @@ const isAuthenticated = contextKey("isAuthenticated")
 func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	debug := flag.Bool("debug", false, "是否启用Debug模式")
+	flag.Parse()
 
 	// 数据库连接，parseTime指令的作用是将SQL的TIME和DATE字段转为Go的time.Time对象
 	dsn := "root:123456@tcp(127.0.0.1:3305)/blog?parseTime=true&loc=Local"
@@ -54,6 +59,7 @@ func main() {
 	sessionManager.Lifetime = 12 * time.Hour
 
 	app := &application{
+		debug:          *debug,
 		infoLog:        infoLog,
 		errorLog:       errorLog,
 		blogs:          &models.BlogModel{DB: db},

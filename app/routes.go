@@ -18,6 +18,7 @@ func (app *application) routes() http.Handler {
 	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf, app.checkAuth)
 
 	route.Get("/", handlerToFunc(dynamic.ThenFunc(app.home)))
+	route.Get("/about", handlerToFunc(dynamic.ThenFunc(app.about)))
 	route.Get("/blog/view/{id}", handlerToFunc(dynamic.ThenFunc(app.blogView)))
 
 	route.Get("/login", handlerToFunc(dynamic.ThenFunc(app.login)))
