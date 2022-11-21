@@ -26,6 +26,10 @@ type application struct {
 	sessionManager *scs.SessionManager
 }
 
+type contextKey string
+
+const isAuthenticated = contextKey("isAuthenticated")
+
 func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERR\t", log.Ldate|log.Ltime|log.Lshortfile)

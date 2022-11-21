@@ -15,7 +15,7 @@ func (app *application) routes() http.Handler {
 		http.StripPrefix("/static", fileServer).ServeHTTP(w, r)
 	})
 
-	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf)
+	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf, app.checkAuth)
 
 	route.Get("/", handlerToFunc(dynamic.ThenFunc(app.home)))
 	route.Get("/blog/view/{id}", handlerToFunc(dynamic.ThenFunc(app.blogView)))
